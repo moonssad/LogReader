@@ -73,7 +73,7 @@ def save_csv(data, filename):
         for date in data:
             print(date)
             writers.writerow(date)
-        # data.clear()
+        data.clear()
 
 def save_csv_pd(data, filename):
     pd.DataFrame(data).to_csv(filename)

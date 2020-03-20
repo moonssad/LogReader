@@ -77,10 +77,12 @@ def save_csv(data, filename):
 def add_2_csv(data, filename):
     if os.path.exists(filename+'.csv'):
         with open(filename + ".csv", "a") as f:
-            writer = csv.writer(f)
+            headers = ['start', 'start_time', 'end', 'end_time', 'time_difference']
+            writer = csv.DictWriter(f,headers)
             for date in data:
                 print(date)
                 writer.writerow(date)
+        data.clear()
     else :
         save_csv(data, filename)
 

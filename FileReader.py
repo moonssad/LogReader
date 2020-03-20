@@ -4,7 +4,7 @@ from datetime import datetime
 from text import detect_decoding_errors_line
 import re
 import csv
-import  copy
+import copy
 import pandas as pd
 
 detail_list = list()
@@ -26,22 +26,20 @@ def read_file(filename):
                         pattern = "\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}.\d{1,3}"
                         result = re.search(pattern, line)
                         time = str_2_time(result[0])
-                        detail_dict['start'] = line
+                        detail_dict['start'] = 'start'
                         detail_dict['start_time'] = time
                     if line.__contains__('RecorderPresenterImpl: ---识别结果------'):
                         pattern = "\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}.\d{1,3}"
                         result = re.search(pattern, line)
                         time = str_2_time(result[0])
-                        detail_dict['end'] = line
+                        detail_dict['end'] = 'end'
                         detail_dict['end_time'] = time
                         if detail_dict.get('start_time') is not None:
                             time_difference = time - detail_dict.get('start_time')
                             detail_dict["time_difference"] = time_difference
-                            deatail  =copy.deepcopy(detail_dict)
+                            deatail = copy.deepcopy(detail_dict)
                             detail_list.append(deatail)
-                            # print(deatail)
                             detail_dict.clear()
-
 
         except UnicodeDecodeError:
             print('当前分母为0')
@@ -61,7 +59,7 @@ def read_dir(rootdir):
         path = os.path.join(rootdir, list[i])
         if os.path.isfile(path):
             read_file(path)
-    save_csv(detail_list, 'tongji_all')
+    add_2_csv(detail_list, 'tongji_all_3_20')
     # save_csv_pd(detail_list,'tongji_pd.csv')
 
 
@@ -75,7 +73,20 @@ def save_csv(data, filename):
             writers.writerow(date)
         data.clear()
 
+#文件追加模式里的数据。
+def add_2_csv(data, filename):
+    if os.path.exists(filename+'.csv'):
+        with open(filename + ".csv", "a") as f:
+            writer = csv.writer(f)
+            for date in data:
+                print(date)
+                writer.writerow(date)
+    else :
+        save_csv(data, filename)
+
+
 def save_csv_pd(data, filename):
     pd.DataFrame(data).to_csv(filename)
-read_dir("data/")
 
+
+read_dir("data/")
